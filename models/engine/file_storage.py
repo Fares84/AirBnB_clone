@@ -3,6 +3,12 @@
 import json
 from os import path
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class FileStorage():
@@ -25,6 +31,13 @@ class FileStorage():
     __file_path = "file.json"
     __objects = {}
 
+    airbnb_classes = {"BaseModel": BaseModel,
+                      "User": User,
+                      "State": State,
+                      "City": City,
+                      "Amenity": Amenity,
+                      "Place": Place,
+                      "Review": Review}
     def all(self):
         """
         [all] methods
@@ -32,7 +45,7 @@ class FileStorage():
         Returns:
             [dict]: [dictionary containing objects]
         """
-        return FileStorage.__objects
+        return self.__objects
 
     def new(self, obj):
         """
@@ -44,7 +57,7 @@ class FileStorage():
         """
         _id = obj.id
         key = str(obj.__class__.__name__) + "." + _id
-        FileStorage.__objects[key] = obj
+        self.__objects[key] = obj
 
     def save(self):
         """
@@ -52,8 +65,8 @@ class FileStorage():
         (path: __file_path)
         """
         _dict = {}
-        with open(FileStorage.__file_path, mode="w", encoding="utf-8") as file:
-            for _key, _value in FileStorage.__objects.items():
+        with open(self.__file_path, mode="w", encoding="utf-8") as file:
+            for _key, _value in self.__objects.items():
                 _dict[_key] = _value.to_dict()
             json.dump(_dict, file)
 
@@ -64,11 +77,12 @@ class FileStorage():
         otherwise, do nothing. If the file doesnt exist,
         no exception should be raised)
         """
-        if path.isfile(FileStorage.__file_path):
-            with open(FileStorage.__file_path, mode="r") as file:
+        if path.isfile(self.__file_path):
+            with open(self.__file_path, mode="r") as file:
                 obj = json.load(file)
+                _dict = {}
                 for key, value in obj.items():
-                    value = eval(value["__class__"])(**value)
-                    FileStorage.__objects[key] = value
+                    _dict[key] = self.airbnb_classes[value["__class__"]](**value)
+                self.__objects = _dict
         else:
             return
