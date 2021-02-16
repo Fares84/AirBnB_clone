@@ -14,6 +14,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+from shlex import split
 
 
 class HBNBCommand(cmd.Cmd):
@@ -66,10 +67,10 @@ class HBNBCommand(cmd.Cmd):
         if the class name is missing, print ** class name missing **
         if the class name doesnt exist, print ** class doesn't exist **
         """
-        if args is None or args == "":
+        if not args:
             print("** class name missing **")
 
-        elif args not in self.airbnb_classes():
+        elif args not in self.airbnb_classes:
             print("** class doesn't exist **")
 
         else:
@@ -87,28 +88,28 @@ class HBNBCommand(cmd.Cmd):
         if args is None or args == "":
             print("** class name missing **")
 
-        elif args.split()[0] not in self.airbnb_classes():
-                print("** class doesn't exist **")
+        elif args[0] not in self.airbnb_classes:
+            print("** class doesn't exist **")
 
-        elif len(args.plit()) == 1:
+        elif len(args) == 1:
             print("** instance id missing **")
 
-        elif "{}.{}".format(args.split()[0], args.split()[1]) not in _all:
+        elif "{}.{}".format(args[0], args[1]) not in _all:
             print("** no instance found **")
 
         else:
-            print(_all["{}.{}".format(args.split()[0], args.split()[1])])
+            print(_all["{}.{}".format(args[0], args[1])])
 
     def do_destroy(self, args):
         """
         [Destroy] is a command to destroy an instance
         """
-        args = args.split()
+        arg = args.split()
         _all = storage.all()
-        if args is None or args == "":
+        if not arg:
             print("** class name missing **")
 
-        elif args not in self.airbnb_classes():
+        elif arg[0] not in self.airbnb_classes.keys():
             print("** class doesn't exist **")
 
         elif len(args.split()) == 1:
@@ -124,11 +125,12 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """
         [all] prints all string representation
+        all instances based or not on the class name
         """
         args = args.split()
         _list = []
-        if args not in self.airbnb_classes():
-            return(print("** class doesn't exist **"))
+        if args and args[0] not in self.airbnb_classes.keys():
+            print("** class doesn't exist **")
 
         elif not args:
             for obj in storage.all().values():
@@ -149,7 +151,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args.split()) == 0:
             print("** class name missing **")
 
-        elif args not in self.airbnb_classes():
+        elif args not in self.airbnb_classes.keys():
             print("** class doesn't exist **")
 
         elif len(args.split()) == 1:
@@ -171,16 +173,48 @@ class HBNBCommand(cmd.Cmd):
             setattr(storage.all()[key], obj_update, value)
             storage.save()
 
-        def do_count(self, args):
-            """
-            retrieve the number of instance of a class: <class name>.count
-            """
-            counter = 0
-            instances = storage.all()
-            for key, obj in instances.items():
-                if args in obj.__str__():
-                    counter + 1
-            print(counter)
+    def default(self, line):
+        """
+        [default method]
+
+        Args:
+        line ([str]): user's input
+        Returns:
+        [method]: returns the method needed or error
+        """
+        _list = (line.replace("(", ".").replace(",", ".").replace(" ", "")
+                 [:-1].split("."))
+        if len(_list) > 1:
+            if _list[1] == "all":
+                return self.do_all(_list[0])
+
+            elif _list[1] == "show":
+                return self.do_show(_list[0] + " " + _list[2])
+
+            elif _list[1] == "destroy":
+                return self.do_destroy(_list[0] + " " + _list[2])
+
+            elif _list[1] == "update":
+                return self.do_update(_list[0] + " " + _list[2] + _list[3] +
+                                      " " + _list[4])
+
+            elif _list[1] == "count":
+                return self.do_count(_list[0])
+
+        else:
+            print("*** Unknown syntax: {}".format(line))
+            return False
+
+    def do_count(self, args):
+        """
+        retrieve the number of instance of a class: <class name>.count
+        """
+        counter = 0
+        instances = storage.all()
+        for key, obj in instances.items():
+            if args in obj.__str__():
+                counter + 1
+        print(counter)
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
