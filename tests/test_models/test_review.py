@@ -22,8 +22,8 @@ class TestReview(unittest.TestCase):
         test variables creation
         """
         review = Review()
-        self.assertIsInstance(review.name, str)
-        self.assertIsInstance(review.user, str)
+        self.assertIsInstance(review.place_id, str)
+        self.assertIsInstance(review.user_id, str)
         self.assertIsInstance(review.text, str)
 
     def test_id_review(self):

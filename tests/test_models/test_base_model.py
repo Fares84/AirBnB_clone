@@ -12,44 +12,60 @@ class TestBaseModel(unittest.TestCase):
 
     def test_id(self):
         """ test id """
-        bm1 = BaseModel()
-        bm2 = BaseModel()
-        self.assertNotEqual(bm1.id, bm2.id)
+        base1 = BaseModel()
+        base2 = BaseModel()
+        self.assertNotEqual(base1.id, base2.id)
 
     def test_str(self):
         """ test string """
-        bm = BaseModel()
-        self.assertEqual(type(bm.__str__()), str)
+        base = BaseModel()
+        self.assertEqual(type(base.__str__()), str)
 
     def test_save(self):
         """ test save to json """
         self.assertTrue(os.path.exists("file.json"))
 
+    def test_to_dict_format(self):
+        """
+        Tests to_dict method
+        """
+        base = BaseModel()
+        base.name = "Betty"
+        base.number = 89
+        base_model = base.to_dict()
+        crea_at = base.created_at.isoformat()
+        upda_at = base.updated_at.isoformat()
+        base_id = base.id
+        expected = {
+            "name": "Betty",
+            "number": 89,
+            "id": base_id,
+            "__class__": "BaseModel",
+            "created_at": crea_at,
+            "updated_at": upda_at
+            }
+
     def test_to_dict(self):
         """ test attributes to dict """
-        bm = BaseModel()
-        bm.my_name = "Holberton"
-        bm.my_number = 89
-        bm_to_json = bm.to_dict()
-        self.assertIsInstance(bm_to_json["my_number"], int)
-        self.assertIsInstance(bm_to_json["my_name"], str)
-        self.assertIsInstance(bm_to_json["__class__"], str)
-        self.assertIsInstance(bm_to_json["updated_at"], str)
-        self.assertIsInstance(bm_to_json["created_at"], str)
-        self.assertIsInstance(bm_to_json["id"], str)
+        base = BaseModel()
+        base.my_name = "Holberton"
+        base.my_number = 89
+        base_to_json = base.to_dict()
+        self.assertIsInstance(base_to_json["my_number"], int)
+        self.assertIsInstance(base_to_json["my_name"], str)
+        self.assertIsInstance(base_to_json["__class__"], str)
+        self.assertIsInstance(base_to_json["updated_at"], str)
+        self.assertIsInstance(base_to_json["created_at"], str)
+        self.assertIsInstance(base_to_json["id"], str)
 
-    def test_init(self):
-        """ test inti """
-        test1 = BaseModel()
-        test1.number = 89
-        test1.name ="holberton"
-        test2 = BaseModel(**test1.to_dict())
-
-        self.assertEqual(test1.id, test2.id)
-        self.assertEqual(test1.created_at, test2.created_at)
-        self.assertEqual(test1.updated_at, test2.updated_at)
-        self.assertEqual(test2.number, 89)
-        self.assertEqual(test2.name, "holberton")
+    def test_instance_kwargs(self):
+        """
+        test instance with multiple args
+        """
+        kwargs = {"name": "Holberton", "number": 89}
+        base = BaseModel(**kwargs)
+        self.assertEqual(base.name, "Holberton")
+        self.assertEqual(base.number, 89)
 
 if __name__ == '__main__':
     unittest.main()
