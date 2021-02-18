@@ -213,7 +213,7 @@ class HBNBCommand(cmd.Cmd):
         instances = storage.all()
         for key, obj in instances.items():
             if args in obj.__str__():
-                counter + 1
+                counter +=1
         print(counter)
 
 if __name__ == "__main__":
