@@ -38,6 +38,7 @@ class FileStorage():
                       "Amenity": Amenity,
                       "Place": Place,
                       "Review": Review}
+
     def all(self):
         """
         [all] methods
@@ -82,7 +83,8 @@ class FileStorage():
                 obj = json.load(file)
                 _dict = {}
                 for key, value in obj.items():
-                    _dict[key] = self.airbnb_classes[value["__class__"]](**value)
+                    _dict[key] = self.airbnb_classes[value["__class__"]]
+                    (**value)
                 self.__objects = _dict
         else:
             return
