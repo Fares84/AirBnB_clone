@@ -15,7 +15,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
-
+import re
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -33,7 +33,7 @@ class HBNBCommand(cmd.Cmd):
                       "Amenity": Amenity,
                       "Place": Place,
                       "Review": Review}
-
+*
     def do_quit(self, args):
         """
         Quit command to exit the program
@@ -170,7 +170,7 @@ class HBNBCommand(cmd.Cmd):
             key = "{}.{}".format(args.split()[0], args.split()[1])
             obj_update = args.split()[2]
             value = args.split()[3]
-            setattr(storage.all()[key], obj_update, value)
+            setattr(_all()[key], obj_update, value)
             storage.save()
 
     def default(self, line):
