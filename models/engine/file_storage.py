@@ -82,9 +82,8 @@ class FileStorage():
             with open(self.__file_path, mode="r") as file:
                 obj = json.load(file)
                 _dict = {}
-                for key, value in obj.items():
-                    _dict[key] = self.airbnb_classes[value["__class__"]]
-                    (**value)
+                for key, val in obj.items():
+                    _dict[key] = self.airbnb_classes[val["__class__"]](**val)
                 self.__objects = _dict
         else:
             return
