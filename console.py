@@ -6,6 +6,7 @@ that let a user work with a program interactively.
 console.py is the entry point command line interpreter for Airbhb project
 """
 import cmd
+import re
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -15,7 +16,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
-import re
+
 
 class HBNBCommand(cmd.Cmd):
     """
@@ -170,7 +171,7 @@ class HBNBCommand(cmd.Cmd):
             key = "{}.{}".format(args.split()[0], args.split()[1])
             obj_update = args.split()[2]
             value = args.split()[3]
-            setattr(_all()[key], obj_update, value)
+            setattr(storage.all()[key], obj_update, value)
             storage.save()
 
     def default(self, line):
